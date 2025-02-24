@@ -78,7 +78,7 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      <div className={"px-2"}>
+      <div className={"px-4"}>
         {/* 할 일 목록 */}
         <div className="mt-10 w-full max-w-lg">
           <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
@@ -86,7 +86,7 @@ export default function TodoPage() {
           {activeTodos.length === 0 ? (
             <p className="rounded-md bg-white py-6 text-center text-gray-500">새로운 할 일을 추가해 주세요.</p>
           ) : (
-            <ul className="p-3https://github.com/82orez/my-todos-next.git rounded-md bg-white shadow-md">
+            <ul className="rounded-md bg-white p-3 shadow-md">
               {activeTodos.map((todo) => (
                 <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
                   <div className="flex w-full items-center">
@@ -149,7 +149,7 @@ export default function TodoPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-3 backdrop-blur-sm">
             <motion.div
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -165,7 +165,12 @@ export default function TodoPage() {
                 placeholder="할 일을 입력하세요..."
               />
               <div className="flex justify-end gap-2">
-                <button onClick={() => setIsModalOpen(false)} className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
+                <button
+                  onClick={() => {
+                    setText("");
+                    setIsModalOpen(false);
+                  }}
+                  className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
                   취소
                 </button>
                 <button onClick={handleAddTodo} className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
