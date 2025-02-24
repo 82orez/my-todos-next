@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTodos, useAddTodo, useToggleTodo, useDeleteTodo } from "@/hooks/useTodos";
 import { signOut, useSession } from "next-auth/react";
@@ -14,6 +14,8 @@ export default function TodoPage() {
   const deleteTodo = useDeleteTodo();
   const [text, setText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null); // ✅ 입력 필드 참조
+
   const router = useRouter();
   const { status, data: session } = useSession();
 
@@ -35,6 +37,9 @@ export default function TodoPage() {
 
     if (isModalOpen) {
       window.addEventListener("keydown", handleKeyDown);
+      if (inputRef.current) {
+        inputRef.current.focus(); // ✅ 모달이 열릴 때 자동 포커스
+      }
     }
 
     return () => {
@@ -158,6 +163,7 @@ export default function TodoPage() {
               className="absolute top-[20%] w-11/12 max-w-md rounded-lg bg-white p-6 shadow-lg">
               <h2 className="mb-4 text-xl font-semibold">새로운 할 일 추가</h2>
               <input
+                ref={inputRef} // ✅ 자동 포커스
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -165,12 +171,7 @@ export default function TodoPage() {
                 placeholder="할 일을 입력하세요..."
               />
               <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setText("");
-                    setIsModalOpen(false);
-                  }}
-                  className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
+                <button onClick={() => setIsModalOpen(false)} className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
                   취소
                 </button>
                 <button onClick={handleAddTodo} className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
