@@ -78,58 +78,60 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      {/* 할 일 목록 */}
-      <div className="mt-10 w-full max-w-lg">
-        <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
+      <div className={"px-2"}>
+        {/* 할 일 목록 */}
+        <div className="mt-10 w-full max-w-lg">
+          <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
 
-        {activeTodos.length === 0 ? (
-          <p className="py-6 text-center text-gray-500">새로운 할 일을 추가해 주세요.</p>
-        ) : (
-          <ul className="rounded-md bg-white p-4 shadow-md">
-            {activeTodos.map((todo) => (
-              <li key={todo.id} className="flex items-center justify-between border-b p-2 last:border-b-0">
-                <div className="flex w-full items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2 h-5 w-5 flex-shrink-0 accent-green-500"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo.mutate({ id: todo.id, completed: true })}
-                  />
-                  <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
-                </div>
-                <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                  <IoTrashOutline size={22} className={"text-gray-900"} />
-                </button>
-              </li>
-            ))}
-          </ul>
+          {activeTodos.length === 0 ? (
+            <p className="rounded-md bg-white py-6 text-center text-gray-500">새로운 할 일을 추가해 주세요.</p>
+          ) : (
+            <ul className="p-3https://github.com/82orez/my-todos-next.git rounded-md bg-white shadow-md">
+              {activeTodos.map((todo) => (
+                <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
+                  <div className="flex w-full items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2 h-5 w-5 flex-shrink-0 accent-green-500"
+                      checked={todo.completed}
+                      onChange={() => toggleTodo.mutate({ id: todo.id, completed: true })}
+                    />
+                    <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
+                  </div>
+                  <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
+                    <IoTrashOutline size={22} className={"text-gray-900"} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* 완료된 목록 */}
+        {completedTodos.length > 0 && (
+          <div className="mt-10 w-full max-w-lg">
+            <h2 className="mb-2 text-xl font-semibold">완료된 목록</h2>
+            <ul className="rounded-md bg-white p-3 shadow-md">
+              {completedTodos.map((todo) => (
+                <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
+                  <div className="flex w-full items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2 h-5 w-5 flex-shrink-0 accent-red-500"
+                      checked={todo.completed}
+                      onChange={() => toggleTodo.mutate({ id: todo.id, completed: false })}
+                    />
+                    <span className="flex-1 whitespace-pre-wrap break-words text-gray-500 line-through">{todo.text}</span>
+                  </div>
+                  <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
+                    <IoTrashOutline size={22} className={"text-gray-900"} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
-
-      {/* 완료된 목록 */}
-      {completedTodos.length > 0 && (
-        <div className="mt-10 w-full max-w-lg">
-          <h2 className="mb-2 text-xl font-semibold">완료된 목록</h2>
-          <ul className="rounded-md bg-white p-4 shadow-md">
-            {completedTodos.map((todo) => (
-              <li key={todo.id} className="flex items-center justify-between border-b p-2 last:border-b-0">
-                <div className="flex w-full items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2 h-5 w-5 flex-shrink-0 accent-red-500"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo.mutate({ id: todo.id, completed: false })}
-                  />
-                  <span className="flex-1 whitespace-pre-wrap break-words text-gray-500 line-through">{todo.text}</span>
-                </div>
-                <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                  <IoTrashOutline size={22} className={"text-gray-900"} />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* ✅ FAB 버튼 (하단 고정) */}
       {status === "authenticated" && (
