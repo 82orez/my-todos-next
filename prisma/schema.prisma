@@ -27,6 +27,10 @@ model Todos {
   completed  Boolean  @default(false)
   text       String
   created_at DateTime @default(now()) @db.Timestamptz()
+
+  // ✅ 사용자와 관계 설정
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -44,6 +48,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Todos     Todos[]
 }
 
 model Account {

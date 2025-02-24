@@ -1,13 +1,36 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const fetchTodos = async () => {
   const res = await fetch("/api/todos");
-  if (!res.ok) throw new Error("Failed to fetch todos");
+
+  if (res.status === 401) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch todos");
+  }
+
   return res.json();
 };
 
 export const useTodos = () => {
-  return useQuery({ queryKey: ["todos"], queryFn: fetchTodos });
+  const router = useRouter();
+
+  return useQuery({
+    queryKey: ["todos"],
+    queryFn: async () => {
+      try {
+        return await fetchTodos();
+      } catch (error: any) {
+        if (error.message === "Unauthorized") {
+          router.push("/users/sign-in"); // ✅ 로그인 페이지로 이동
+        }
+        throw error;
+      }
+    },
+  });
 };
 
 export const useAddTodo = () => {

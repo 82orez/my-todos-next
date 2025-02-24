@@ -3,22 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTodos, useAddTodo, useToggleTodo, useDeleteTodo } from "@/hooks/useTodos";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
+
   const addTodo = useAddTodo();
   const toggleTodo = useToggleTodo();
   const deleteTodo = useDeleteTodo();
+
   const [text, setText] = useState("");
   const router = useRouter();
-
-  const { status, data } = useSession();
-  console.log("status: ", status);
-  console.log("data: ", data);
+  const { status, data: session } = useSession();
 
   const handleAddTodo = () => {
-    if (text.trim() !== "") {
+    if (text.trim() !== "" && status === "authenticated") {
       addTodo.mutate(text);
       setText("");
     }
@@ -36,9 +35,12 @@ export default function TodoPage() {
         <h1 className="text-2xl font-bold">Todo App</h1>
         <div className="flex gap-4">
           {status === "authenticated" ? (
-            <button onClick={() => signOut()} className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
-              Sign Out
-            </button>
+            <>
+              <span className="text-gray-700">{session?.user?.email}</span>
+              <button onClick={() => signOut()} className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
+                Sign Out
+              </button>
+            </>
           ) : (
             <>
               <button
@@ -56,7 +58,7 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      {/* 할 일 입력창 */}
+      {/* 할 일 입력창 (로그인한 사용자만 가능) */}
       <div className="my-6 flex gap-2">
         <input
           type="text"
@@ -64,8 +66,12 @@ export default function TodoPage() {
           onChange={(e) => setText(e.target.value)}
           className="w-64 rounded-md border p-2"
           placeholder="새로운 할 일을 입력하세요..."
+          disabled={status !== "authenticated"}
         />
-        <button onClick={handleAddTodo} className="rounded-md bg-blue-500 px-4 py-2 text-white">
+        <button
+          onClick={handleAddTodo}
+          className="rounded-md bg-blue-500 px-4 py-2 text-white disabled:bg-gray-400"
+          disabled={status !== "authenticated"}>
           추가
         </button>
       </div>
@@ -95,7 +101,7 @@ export default function TodoPage() {
         </ul>
       </div>
 
-      {/* 완료된 목록: 완료된 할 일이 있을 경우에만 렌더링 */}
+      {/* 완료된 목록 */}
       {completedTodos.length > 0 && (
         <div className="mt-6 w-full max-w-lg">
           <h2 className="mb-2 text-xl font-semibold">완료된 목록</h2>

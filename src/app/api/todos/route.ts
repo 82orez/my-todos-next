@@ -1,26 +1,43 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-// ✅ 할 일 목록 가져오기
+// ✅ 할 일 목록 가져오기 (로그인한 사용자만 자신의 할 일 조회)
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    console.log("Authenticated User ID:", session.user.id); // 로그로 사용자 ID 확인
+
     const todos = await prisma.todos.findMany({
+      where: { userId: session.user.id },
       orderBy: { created_at: "desc" },
     });
+
     return NextResponse.json(todos);
   } catch (error) {
+    console.error("Error fetching todos:", error);
     return NextResponse.json({ error: "Failed to fetch todos" }, { status: 500 });
   }
 }
 
-// ✅ 새 할 일 추가
+// ✅ 할 일 추가 (로그인한 사용자만 가능)
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { text } = await req.json();
     if (!text) return NextResponse.json({ error: "Text is required" }, { status: 400 });
 
     const newTodo = await prisma.todos.create({
-      data: { text },
+      data: { text, userId: session.user.id },
     });
 
     return NextResponse.json(newTodo);
