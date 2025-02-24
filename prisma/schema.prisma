@@ -28,3 +28,83 @@ model Todos {
   text       String
   created_at DateTime @default(now()) @db.Timestamptz()
 }
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String? // 이메일 추가 부분
+  credentials   Boolean   @default(false) // 이메일로 회원가입할 때만 True
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  // Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+
+  // Kakao 로그인에 필요한 부분.
+  refresh_token_expires_in Int?
+
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// 이메일 가입 시 인증코드
+model EmailVerificationToken {
+  id      String   @id @default(cuid())
+  email   String   @unique
+  token   String
+  expires DateTime
+
+  createdAt DateTime @default(now())
+}
+
+// 비밀번호 변경 시에 생성된 링크
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String   @unique
+  token   String
+  expires DateTime
+
+  createdAt DateTime @default(now())
+}

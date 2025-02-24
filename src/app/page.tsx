@@ -31,11 +31,11 @@ export default function TodoPage() {
         <h1 className="text-2xl font-bold">Todo App</h1>
         <div className="flex gap-4">
           <button
-            onClick={() => router.push("/sign-up")}
+            onClick={() => router.push("/users/sign-up")}
             className="rounded-md border border-blue-500 px-4 py-2 text-blue-500 transition hover:bg-blue-500 hover:text-white">
             회원가입
           </button>
-          <button onClick={() => router.push("/login")} className="rounded-md bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600">
+          <button onClick={() => router.push("/users/sign-in")} className="rounded-md bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600">
             로그인
           </button>
         </div>
