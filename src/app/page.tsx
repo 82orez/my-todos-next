@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTodos, useAddTodo, useToggleTodo, useDeleteTodo } from "@/hooks/useTodos";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { IoTrashOutline } from "react-icons/io5";
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
@@ -52,10 +53,10 @@ export default function TodoPage() {
       {/* ✅ Navbar */}
       <nav className="sticky top-0 flex w-full items-center justify-between bg-white px-6 py-4 shadow-md">
         <h1 className="text-2xl font-bold">Todo App</h1>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           {status === "authenticated" ? (
             <>
-              <span className="text-gray-700">{session?.user?.email}</span>
+              <div className="hidden text-gray-700 md:block">{session?.user?.email}</div>
               <button onClick={() => signOut()} className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
                 Sign Out
               </button>
@@ -78,7 +79,7 @@ export default function TodoPage() {
       </nav>
 
       {/* 할 일 목록 */}
-      <div className="mt-6 w-full max-w-lg">
+      <div className="mt-10 w-full max-w-lg">
         <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
 
         {activeTodos.length === 0 ? (
@@ -97,7 +98,7 @@ export default function TodoPage() {
                   <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
                 </div>
                 <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                  🗑️
+                  <IoTrashOutline size={22} className={"text-gray-900"} />
                 </button>
               </li>
             ))}
@@ -107,7 +108,7 @@ export default function TodoPage() {
 
       {/* 완료된 목록 */}
       {completedTodos.length > 0 && (
-        <div className="mt-6 w-full max-w-lg">
+        <div className="mt-10 w-full max-w-lg">
           <h2 className="mb-2 text-xl font-semibold">완료된 목록</h2>
           <ul className="rounded-md bg-white p-4 shadow-md">
             {completedTodos.map((todo) => (
@@ -122,7 +123,7 @@ export default function TodoPage() {
                   <span className="flex-1 whitespace-pre-wrap break-words text-gray-500 line-through">{todo.text}</span>
                 </div>
                 <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                  🗑️
+                  <IoTrashOutline size={22} className={"text-gray-900"} />
                 </button>
               </li>
             ))}
@@ -135,7 +136,7 @@ export default function TodoPage() {
         <button
           onClick={() => setIsModalOpen(true)}
           className="fixed bottom-6 right-6 transform rounded-full bg-blue-500 p-5 text-white shadow-lg transition hover:scale-110 hover:bg-blue-600">
-          +
+          + 할 일 추가
         </button>
       )}
 
@@ -152,7 +153,7 @@ export default function TodoPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="w-80 rounded-lg bg-white p-6 shadow-lg">
+              className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
               <h2 className="mb-4 text-xl font-semibold">새로운 할 일 추가</h2>
               <input
                 type="text"
