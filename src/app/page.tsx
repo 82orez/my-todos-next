@@ -7,12 +7,11 @@ import { signOut, useSession } from "next-auth/react";
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
-
   const addTodo = useAddTodo();
   const toggleTodo = useToggleTodo();
   const deleteTodo = useDeleteTodo();
-
   const [text, setText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const { status, data: session } = useSession();
 
@@ -20,6 +19,7 @@ export default function TodoPage() {
     if (text.trim() !== "" && status === "authenticated") {
       addTodo.mutate(text);
       setText("");
+      setIsModalOpen(false); // ✅ 모달 닫기
     }
   };
 
@@ -33,10 +33,10 @@ export default function TodoPage() {
       {/* ✅ Navbar */}
       <nav className="sticky top-0 flex w-full items-center justify-between bg-white px-6 py-4 shadow-md">
         <h1 className="text-2xl font-bold">Todo App</h1>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           {status === "authenticated" ? (
             <>
-              <span className="text-gray-700">{session?.user?.email}</span>
+              <div className="text-gray-700">{session?.user?.email}</div>
               <button onClick={() => signOut()} className="rounded-md bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
                 Sign Out
               </button>
@@ -58,26 +58,8 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      {/* 할 일 입력창 (로그인한 사용자만 가능) */}
-      <div className="my-6 flex gap-2">
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="w-64 rounded-md border p-2"
-          placeholder="새로운 할 일을 입력하세요..."
-          disabled={status !== "authenticated"}
-        />
-        <button
-          onClick={handleAddTodo}
-          className="rounded-md bg-blue-500 px-4 py-2 text-white disabled:bg-gray-400"
-          disabled={status !== "authenticated"}>
-          추가
-        </button>
-      </div>
-
       {/* 할 일 목록 */}
-      <div className="w-full max-w-lg">
+      <div className="mt-6 w-full max-w-lg">
         <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
         <ul className="rounded-md bg-white p-4 shadow-md">
           {todos
@@ -123,6 +105,39 @@ export default function TodoPage() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* ✅ 모달 트리거 버튼 (하단 고정) */}
+      {status === "authenticated" && (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="fixed bottom-4 right-4 rounded-full bg-blue-500 px-6 py-3 text-white shadow-lg transition hover:bg-blue-600">
+          + 추가
+        </button>
+      )}
+
+      {/* ✅ 모달 (할 일 입력창) */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex w-full items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="w-80 rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-semibold">새로운 할 일 추가</h2>
+            <input
+              type="text"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="mb-4 w-full rounded-md border p-2"
+              placeholder="할 일을 입력하세요..."
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setIsModalOpen(false)} className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
+                취소
+              </button>
+              <button onClick={handleAddTodo} className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+                추가
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
