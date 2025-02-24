@@ -155,7 +155,7 @@ export default function TodoPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+              className="absolute top-[20%] w-11/12 max-w-md rounded-lg bg-white p-6 shadow-lg">
               <h2 className="mb-4 text-xl font-semibold">새로운 할 일 추가</h2>
               <input
                 type="text"
