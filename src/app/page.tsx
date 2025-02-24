@@ -20,7 +20,7 @@ export default function TodoPage() {
     if (text.trim() !== "" && status === "authenticated") {
       addTodo.mutate(text);
       setText("");
-      setIsModalOpen(false); // ✅ 모달 닫기
+      setIsModalOpen(false);
     }
   };
 
@@ -45,6 +45,7 @@ export default function TodoPage() {
   if (error) return <p>Error loading todos</p>;
 
   const completedTodos = todos?.filter((todo) => todo.completed) || [];
+  const activeTodos = todos?.filter((todo) => !todo.completed) || [];
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-100">
@@ -79,26 +80,29 @@ export default function TodoPage() {
       {/* 할 일 목록 */}
       <div className="mt-6 w-full max-w-lg">
         <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
-        <ul className="rounded-md bg-white p-4 shadow-md">
-          {todos
-            ?.filter((todo) => !todo.completed)
-            .map((todo) => (
+
+        {activeTodos.length === 0 ? (
+          <p className="py-6 text-center text-gray-500">새로운 할 일을 추가해 주세요.</p>
+        ) : (
+          <ul className="rounded-md bg-white p-4 shadow-md">
+            {activeTodos.map((todo) => (
               <li key={todo.id} className="flex items-center justify-between border-b p-2 last:border-b-0">
-                <div className="flex items-center">
+                <div className="flex w-full items-center">
                   <input
                     type="checkbox"
-                    className="mr-2 h-5 w-5 accent-green-500"
+                    className="mr-2 h-5 w-5 flex-shrink-0 accent-green-500"
                     checked={todo.completed}
                     onChange={() => toggleTodo.mutate({ id: todo.id, completed: true })}
                   />
-                  <span>{todo.text}</span>
+                  <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
                 </div>
-                <button onClick={() => deleteTodo.mutate(todo.id)} className="text-red-500 hover:text-red-700">
+                <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
                   🗑️
                 </button>
               </li>
             ))}
-        </ul>
+          </ul>
+        )}
       </div>
 
       {/* 완료된 목록 */}
@@ -108,16 +112,16 @@ export default function TodoPage() {
           <ul className="rounded-md bg-white p-4 shadow-md">
             {completedTodos.map((todo) => (
               <li key={todo.id} className="flex items-center justify-between border-b p-2 last:border-b-0">
-                <div className="flex items-center">
+                <div className="flex w-full items-center">
                   <input
                     type="checkbox"
-                    className="mr-2 h-5 w-5 accent-red-500"
+                    className="mr-2 h-5 w-5 flex-shrink-0 accent-red-500"
                     checked={todo.completed}
                     onChange={() => toggleTodo.mutate({ id: todo.id, completed: false })}
                   />
-                  <span className="text-gray-500 line-through">{todo.text}</span>
+                  <span className="flex-1 whitespace-pre-wrap break-words text-gray-500 line-through">{todo.text}</span>
                 </div>
-                <button onClick={() => deleteTodo.mutate(todo.id)} className="text-red-500 hover:text-red-700">
+                <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
                   🗑️
                 </button>
               </li>
@@ -131,7 +135,7 @@ export default function TodoPage() {
         <button
           onClick={() => setIsModalOpen(true)}
           className="fixed bottom-6 right-6 transform rounded-full bg-blue-500 p-5 text-white shadow-lg transition hover:scale-110 hover:bg-blue-600">
-          + 할 일 추가
+          +
         </button>
       )}
 
