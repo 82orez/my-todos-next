@@ -35,18 +35,33 @@ export const useTodos = () => {
 
 export const useAddTodo = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (text: string) => {
       const res = await fetch("/api/todos", {
         method: "POST",
         body: JSON.stringify({ text }),
-        headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) throw new Error("Failed to add todo");
+      if (!res.ok) throw new Error("할 일 추가 실패");
       return res.json();
     },
-    // @ts-ignore
-    onSuccess: () => queryClient.invalidateQueries(["todos"]),
+    onMutate: async (text) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (oldTodos: any) => [...oldTodos, { id: `temp-${Date.now()}`, text, completed: false }]);
+
+      return { previousTodos };
+    },
+    onError: (err, text, context) => {
+      if (context?.previousTodos) {
+        queryClient.setQueryData(["todos"], context.previousTodos);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
   });
 };
 

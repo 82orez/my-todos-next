@@ -165,7 +165,7 @@ export default function TodoPage() {
               className="absolute top-[20%] w-11/12 max-w-md rounded-lg bg-white p-6 shadow-lg">
               <h2 className="mb-4 text-xl font-semibold">새로운 할 일 추가</h2>
               <input
-                ref={inputRef} // ✅ 자동 포커스
+                ref={inputRef}
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -176,8 +176,11 @@ export default function TodoPage() {
                 <button onClick={() => setIsModalOpen(false)} className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
                   취소
                 </button>
-                <button onClick={handleAddTodo} className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-                  추가
+                <button
+                  onClick={handleAddTodo}
+                  className={`rounded-md px-4 py-2 text-white ${addTodo.isPending ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
+                  disabled={addTodo.isPending}>
+                  {addTodo.isPending ? "추가 중..." : "추가"}
                 </button>
               </div>
             </motion.div>
