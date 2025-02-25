@@ -169,6 +169,12 @@ export default function TodoPage() {
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault(); // 기본 동작 방지 (폼 제출 방지)
+                    handleAddTodo(); // 할 일 추가
+                  }
+                }}
                 className="mb-4 w-full rounded-md border p-2"
                 placeholder="할 일을 입력하세요..."
               />
