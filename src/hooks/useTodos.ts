@@ -67,6 +67,7 @@ export const useAddTodo = () => {
 
 export const useToggleTodo = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
       const res = await fetch("/api/todos", {
@@ -74,11 +75,33 @@ export const useToggleTodo = () => {
         body: JSON.stringify({ id, completed }),
         headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) throw new Error("Failed to update todo");
-      return res.json();
+
+      if (!res.ok) {
+        const errorMessage = await res.text();
+        console.error("완료 상태 변경 실패:", errorMessage);
+        throw new Error(`완료 상태 변경 실패: ${errorMessage}`);
+      }
+
+      return { id, completed };
     },
-    // @ts-ignore
-    onSuccess: () => queryClient.invalidateQueries(["todos"]),
+    onMutate: async ({ id, completed }) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (oldTodos: any) => oldTodos?.map((todo: any) => (todo.id === id ? { ...todo, completed } : todo)));
+
+      return { previousTodos };
+    },
+    onError: (err, { id, completed }, context) => {
+      console.error("완료 상태 변경 요청 실패:", err.message);
+      if (context?.previousTodos) {
+        queryClient.setQueryData(["todos"], context.previousTodos);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
   });
 };
 
