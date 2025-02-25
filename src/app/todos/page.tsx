@@ -85,7 +85,7 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      <div className={"px-4"}>
+      <div className={"w-full max-w-lg px-4"}>
         {/* 할 일 목록 */}
         <div className="mt-10 w-full max-w-lg">
           <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
