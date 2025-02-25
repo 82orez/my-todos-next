@@ -85,6 +85,7 @@ export const useToggleTodo = () => {
 // ✅ 할 일 삭제 훅 추가
 export const useDeleteTodo = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch("/api/todos", {
@@ -92,10 +93,25 @@ export const useDeleteTodo = () => {
         body: JSON.stringify({ id }),
         headers: { "Content-Type": "application/json" },
       });
-      if (!res.ok) throw new Error("Failed to delete todo");
-      return res.json();
+      if (!res.ok) throw new Error("할 일 삭제 실패");
+      return id;
     },
-    // @ts-ignore
-    onSuccess: () => queryClient.invalidateQueries(["todos"]),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (oldTodos: any) => oldTodos?.filter((todo: any) => todo.id !== id) || []);
+
+      return { previousTodos };
+    },
+    onError: (err, id, context) => {
+      if (context?.previousTodos) {
+        queryClient.setQueryData(["todos"], context.previousTodos);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
   });
 };

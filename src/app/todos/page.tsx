@@ -105,8 +105,11 @@ export default function TodoPage() {
                     />
                     <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
                   </div>
-                  <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                    <IoTrashOutline size={22} className={"text-gray-900"} />
+                  <button
+                    onClick={() => deleteTodo.mutate(todo.id)}
+                    className={`ml-2 flex-shrink-0 ${deleteTodo.isPending ? "cursor-not-allowed text-gray-400" : "text-red-500 hover:text-red-700"}`}
+                    disabled={deleteTodo.isPending}>
+                    {deleteTodo.isPending ? "삭제 중..." : <IoTrashOutline size={22} />}
                   </button>
                 </li>
               ))}
