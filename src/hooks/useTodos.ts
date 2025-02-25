@@ -50,7 +50,7 @@ export const useAddTodo = () => {
 
       const previousTodos = queryClient.getQueryData(["todos"]);
 
-      queryClient.setQueryData(["todos"], (oldTodos: any) => [...oldTodos, { id: `temp-${Date.now()}`, text, completed: false }]);
+      queryClient.setQueryData(["todos"], (oldTodos: any) => [{ id: `temp-${Date.now()}`, text, completed: false }, ...oldTodos]);
 
       return { previousTodos };
     },
