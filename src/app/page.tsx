@@ -12,7 +12,7 @@ export default function HomePage() {
   // ✅ 로그인된 사용자는 todo 페이지로 이동
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/app/todos");
+      router.replace("/todos");
     }
   }, [status, router]);
 
