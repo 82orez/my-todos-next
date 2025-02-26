@@ -2,17 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTodos, useAddTodo, useToggleTodo, useDeleteTodo } from "@/hooks/useTodos";
+import { useTodos, useAddTodo, useToggleTodo, useDeleteTodo, useUpdateTodo } from "@/hooks/useTodos";
 import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoTrashOutline } from "react-icons/io5";
+import { FiEdit3 } from "react-icons/fi"; // 수정 아이콘 추가
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
   const addTodo = useAddTodo();
   const toggleTodo = useToggleTodo();
   const deleteTodo = useDeleteTodo();
+  const updateTodo = useUpdateTodo(); // ✅ 추가
   const [text, setText] = useState("");
+  const [editId, setEditId] = useState<string | null>(null); // ✅ 수정 중인 할 일 ID
+  const [editText, setEditText] = useState(""); // ✅ 수정할 텍스트
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null); // ✅ 입력 필드 참조
 
@@ -27,11 +31,26 @@ export default function TodoPage() {
     }
   };
 
+  // ✅ 할 일 수정 함수
+  const handleEditTodo = (id: string, text: string) => {
+    setEditId(id); // 수정 모드 활성화
+    setEditText(text);
+  };
+
+  // ✅ 할 일 저장 함수 (Enter 또는 버튼 클릭)
+  const handleSaveTodo = (id: string) => {
+    if (editText.trim() !== "") {
+      updateTodo.mutate({ id, text: editText });
+      setEditId(null);
+    }
+  };
+
   // ✅ Esc 키로 모달 닫기 기능 추가
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsModalOpen(false);
+        setEditId(null); // 수정 모드 취소
       }
     };
 
@@ -47,6 +66,7 @@ export default function TodoPage() {
     };
   }, [isModalOpen]);
 
+  // !
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading todos</p>;
 
@@ -103,11 +123,35 @@ export default function TodoPage() {
                       checked={todo.completed}
                       onChange={() => toggleTodo.mutate({ id: todo.id, completed: true })}
                     />
-                    <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
+                    {editId === todo.id ? (
+                      <input
+                        type="text"
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveTodo(todo.id);
+                        }}
+                        autoFocus
+                        className="w-full border p-1"
+                      />
+                    ) : (
+                      <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
+                    )}
                   </div>
-                  <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700">
-                    <IoTrashOutline size={22} className={"text-gray-900"} />
-                  </button>
+                  <div className="flex gap-2">
+                    {editId === todo.id ? (
+                      <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
+                        저장
+                      </button>
+                    ) : (
+                      <button onClick={() => handleEditTodo(todo.id, todo.text)} className="text-gray-500 hover:text-gray-700">
+                        <FiEdit3 size={18} />
+                      </button>
+                    )}
+                    <button onClick={() => deleteTodo.mutate(todo.id)} className="text-red-500 hover:text-red-700">
+                      <IoTrashOutline size={22} />
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

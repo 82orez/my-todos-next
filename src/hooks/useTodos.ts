@@ -138,3 +138,43 @@ export const useDeleteTodo = () => {
     },
   });
 };
+
+export const useUpdateTodo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, text }: { id: string; text: string }) => {
+      const res = await fetch(`/api/todos`, {
+        method: "PATCH",
+        body: JSON.stringify({ id, text }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        const errorMessage = await res.text();
+        console.error("할 일 수정 실패:", errorMessage);
+        throw new Error(`할 일 수정 실패: ${errorMessage}`);
+      }
+
+      return { id, text };
+    },
+    onMutate: async ({ id, text }) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (oldTodos: any) => oldTodos?.map((todo: any) => (todo.id === id ? { ...todo, text } : todo)));
+
+      return { previousTodos };
+    },
+    onError: (err, { id, text }, context) => {
+      console.error("할 일 수정 요청 실패:", err.message);
+      if (context?.previousTodos) {
+        queryClient.setQueryData(["todos"], context.previousTodos);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+};
