@@ -51,6 +51,7 @@ export default function TodoPage() {
       if (event.key === "Escape") {
         setIsModalOpen(false);
         setEditId(null);
+        setText("");
       }
     };
 
@@ -62,6 +63,15 @@ export default function TodoPage() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isModalOpen, editId]); // ✅ `editId`도 감시하도록 변경
+
+  // ✅ 모달이 열릴 때 입력창에 자동 포커스 추가
+  useEffect(() => {
+    if (isModalOpen) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  }, [isModalOpen]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading todos</p>;
@@ -184,7 +194,10 @@ export default function TodoPage() {
       {/* ✅ FAB 버튼 (하단 고정) */}
       {status === "authenticated" && (
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setIsModalOpen(true);
+            setTimeout(() => inputRef.current?.focus(), 0);
+          }}
           className="fixed bottom-6 right-6 transform rounded-full bg-blue-500 p-5 text-white shadow-lg transition hover:scale-110 hover:bg-blue-600">
           + 할 일 추가
         </button>
@@ -220,7 +233,12 @@ export default function TodoPage() {
                 placeholder="할 일을 입력하세요..."
               />
               <div className="flex justify-end gap-2">
-                <button onClick={() => setIsModalOpen(false)} className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
+                <button
+                  onClick={() => {
+                    setText("");
+                    setIsModalOpen(false);
+                  }}
+                  className="rounded-md bg-gray-400 px-4 py-2 text-white hover:bg-gray-500">
                   취소
                 </button>
                 <button
