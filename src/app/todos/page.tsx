@@ -54,17 +54,14 @@ export default function TodoPage() {
       }
     };
 
-    if (isModalOpen) {
+    if (isModalOpen || editId !== null) {
       window.addEventListener("keydown", handleKeyDown);
-      if (inputRef.current) {
-        inputRef.current.focus(); // ✅ 모달이 열릴 때 자동 포커스
-      }
     }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, editId]); // ✅ `editId`도 감시하도록 변경
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading todos</p>;
