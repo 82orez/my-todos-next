@@ -76,3 +76,20 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Failed to delete todo" }, { status: 500 });
   }
 }
+
+// ✅ 할 일 수정 API 추가
+export async function PUT(req: Request) {
+  try {
+    const { id, text } = await req.json();
+    if (!id || !text) return NextResponse.json({ error: "ID와 텍스트가 필요합니다." }, { status: 400 });
+
+    const updatedTodo = await prisma.todos.update({
+      where: { id },
+      data: { text },
+    });
+
+    return NextResponse.json(updatedTodo);
+  } catch (error) {
+    return NextResponse.json({ error: "할 일 수정 실패" }, { status: 500 });
+  }
+}

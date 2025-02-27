@@ -138,3 +138,24 @@ export const useDeleteTodo = () => {
     },
   });
 };
+
+export const useUpdateTodo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, text }: { id: string; text: string }) => {
+      const res = await fetch("/api/todos", {
+        method: "PUT",
+        body: JSON.stringify({ id, text }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("할 일 수정 실패");
+
+      return res.json();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+};
