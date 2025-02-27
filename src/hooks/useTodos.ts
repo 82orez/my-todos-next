@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { queryClient } from "@/app/providers";
 
 const fetchTodos = async () => {
   const res = await fetch("/api/todos");
@@ -34,8 +35,6 @@ export const useTodos = () => {
 };
 
 export const useAddTodo = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (text: string) => {
       const res = await fetch("/api/todos", {
@@ -66,8 +65,6 @@ export const useAddTodo = () => {
 };
 
 export const useToggleTodo = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
       const res = await fetch("/api/todos", {
@@ -107,8 +104,6 @@ export const useToggleTodo = () => {
 
 // ✅ 할 일 삭제 훅 추가
 export const useDeleteTodo = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch("/api/todos", {
@@ -140,8 +135,6 @@ export const useDeleteTodo = () => {
 };
 
 export const useUpdateTodo = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ id, text }: { id: string; text: string }) => {
       const res = await fetch("/api/todos", {
