@@ -123,7 +123,7 @@ export default function TodoPage() {
           ) : (
             <ul className="rounded-md bg-white p-3 shadow-md">
               {activeTodos.map((todo) => (
-                <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
+                <li key={todo.id} className="mb-2 flex items-center justify-between gap-3 border-b p-2 last:mb-0 last:border-b-0">
                   <div className="flex w-full items-center gap-1">
                     <input
                       type="checkbox"
@@ -147,14 +147,14 @@ export default function TodoPage() {
                       <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
                     )}
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     {editId === todo.id ? (
                       <>
                         <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
                           <FaRegSave size={22} />
                         </button>
                         <button onClick={() => handleSaveTodo(todo.id)} className="text-red-500 hover:text-red-700">
-                          <MdCancel size={22} />
+                          <MdCancel size={25} />
                         </button>
                       </>
                     ) : (
