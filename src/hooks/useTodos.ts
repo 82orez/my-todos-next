@@ -154,6 +154,20 @@ export const useUpdateTodo = () => {
 
       return res.json();
     },
+    onMutate: async ({ id, text }) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const previousTodos = queryClient.getQueryData(["todos"]);
+
+      queryClient.setQueryData(["todos"], (oldTodos: any) => oldTodos.map((todo: any) => (todo.id === id ? { ...todo, text } : todo)));
+
+      return { previousTodos };
+    },
+    onError: (err, { id, text }, context) => {
+      if (context?.previousTodos) {
+        queryClient.setQueryData(["todos"], context.previousTodos);
+      }
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
