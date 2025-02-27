@@ -52,8 +52,8 @@ export default function TodoPage() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsModalOpen(false);
-        setEditId(null);
         setText("");
+        setEditId(null);
       }
     };
 
@@ -123,7 +123,10 @@ export default function TodoPage() {
           ) : (
             <ul className="rounded-md bg-white p-3 shadow-md">
               {activeTodos.map((todo) => (
-                <li key={todo.id} className="mb-2 flex items-center justify-between gap-3 border-b p-2 last:mb-0 last:border-b-0">
+                <li
+                  key={todo.id}
+                  className="mb-2 flex items-center justify-between gap-3 border-b p-2 last:mb-0 last:border-b-0"
+                  onDoubleClick={() => handleEditTodo(todo.id, todo.text)}>
                   <div className="flex w-full items-center gap-1">
                     <input
                       type="checkbox"
@@ -144,7 +147,7 @@ export default function TodoPage() {
                         className="w-full border p-1"
                       />
                     ) : (
-                      <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
+                      <div className="flex-1 whitespace-pre-wrap break-words">{todo.text}</div>
                     )}
                   </div>
                   <div className="flex gap-2">
