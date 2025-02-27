@@ -9,6 +9,7 @@ import { IoTrashOutline } from "react-icons/io5";
 import { FiEdit3 } from "react-icons/fi";
 import { FaRegSave } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
@@ -93,7 +94,7 @@ export default function TodoPage() {
     };
   }, [editId]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <p>Error loading todos</p>;
 
   const completedTodos = todos?.filter((todo) => todo.completed) || [];

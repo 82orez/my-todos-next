@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { FiLoader } from "react-icons/fi";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function HomePage() {
   const router = useRouter();
@@ -19,13 +20,7 @@ export default function HomePage() {
   return (
     <>
       {status === "loading" ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100 bg-opacity-50 backdrop-blur-sm">
-          <div className="flex flex-col items-center justify-center rounded-xl bg-white p-6 shadow-lg">
-            {/* React Icons 로딩 아이콘 + Tailwind 애니메이션 적용 */}
-            <FiLoader className="h-12 w-12 animate-spin text-gray-500" />
-            <p className="mt-4 animate-pulse text-lg font-semibold text-gray-700">Loading...</p>
-          </div>
-        </div>
+        <LoadingSpinner />
       ) : (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
           <h1 className="mb-6 text-3xl font-bold">Welcome to the Todo App</h1>
