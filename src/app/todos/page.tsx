@@ -122,7 +122,7 @@ export default function TodoPage() {
             <ul className="rounded-md bg-white p-3 shadow-md">
               {activeTodos.map((todo) => (
                 <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
-                  <div className="flex w-full items-center">
+                  <div className="flex w-full items-center gap-1">
                     <input
                       type="checkbox"
                       className="mr-2 h-5 w-5 flex-shrink-0 accent-green-500"
@@ -145,17 +145,17 @@ export default function TodoPage() {
                       <span className="flex-1 whitespace-pre-wrap break-words">{todo.text}</span>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     {editId === todo.id ? (
                       <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
                         저장
                       </button>
                     ) : (
-                      <button onClick={() => handleEditTodo(todo.id, todo.text)} className="text-gray-500 hover:text-gray-700">
-                        <FiEdit3 size={18} />
+                      <button onClick={() => handleEditTodo(todo.id, todo.text)} className="text-gray-600 hover:text-gray-900">
+                        <FiEdit3 size={22} />
                       </button>
                     )}
-                    <button onClick={() => deleteTodo.mutate(todo.id)} className="text-red-500 hover:text-red-700">
+                    <button onClick={() => deleteTodo.mutate(todo.id)} className="text-gray-600 hover:text-gray-900">
                       <IoTrashOutline size={22} />
                     </button>
                   </div>
@@ -172,17 +172,17 @@ export default function TodoPage() {
             <ul className="rounded-md bg-white p-3 shadow-md">
               {completedTodos.map((todo) => (
                 <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
-                  <div className="flex w-full items-center">
+                  <div className="flex w-full items-center gap-1">
                     <input
                       type="checkbox"
-                      className="mr-2 h-5 w-5 flex-shrink-0 accent-red-500"
+                      className="mr-2 h-5 w-5 flex-shrink-0 accent-blue-500"
                       checked={todo.completed}
                       onChange={() => toggleTodo.mutate({ id: todo.id, completed: false })}
                     />
                     <span className="flex-1 whitespace-pre-wrap break-words text-gray-500 line-through">{todo.text}</span>
                   </div>
                   <button onClick={() => deleteTodo.mutate(todo.id)} className="ml-2 flex-shrink-0">
-                    <IoTrashOutline size={22} className={"text-gray-900"} />
+                    <IoTrashOutline size={22} className="text-gray-600 hover:text-gray-900" />
                   </button>
                 </li>
               ))}
