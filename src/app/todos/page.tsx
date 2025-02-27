@@ -23,6 +23,7 @@ export default function TodoPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null); // ✅ 입력 필드 참조
+  const editRef = useRef<HTMLDivElement>(null); // ✅ 수정 입력창 감지용 ref 추가
 
   const router = useRouter();
   const { status, data: session } = useSession();
@@ -75,6 +76,23 @@ export default function TodoPage() {
     }
   }, [isModalOpen]);
 
+  // ✅ 입력창 외부 클릭 시 수정 취소
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (editRef.current && !editRef.current.contains(event.target as Node)) {
+        setEditId(null);
+      }
+    };
+
+    if (editId !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editId]);
+
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading todos</p>;
 
@@ -115,7 +133,7 @@ export default function TodoPage() {
 
       <div className={"w-full max-w-lg px-4"}>
         {/* 할 일 목록 */}
-        <div className="mt-10 w-full max-w-lg">
+        <div className="mt-10 w-full max-w-lg" ref={editRef}>
           <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
 
           {activeTodos.length === 0 ? (
