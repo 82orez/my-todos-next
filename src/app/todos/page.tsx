@@ -7,6 +7,8 @@ import { signOut, useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoTrashOutline } from "react-icons/io5";
 import { FiEdit3 } from "react-icons/fi";
+import { FaRegSave } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 export default function TodoPage() {
   const { data: todos, isLoading, error } = useTodos();
@@ -147,17 +149,24 @@ export default function TodoPage() {
                   </div>
                   <div className="flex gap-3">
                     {editId === todo.id ? (
-                      <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
-                        저장
-                      </button>
+                      <>
+                        <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
+                          <FaRegSave size={22} />
+                        </button>
+                        <button onClick={() => handleSaveTodo(todo.id)} className="text-red-500 hover:text-red-700">
+                          <MdCancel size={22} />
+                        </button>
+                      </>
                     ) : (
-                      <button onClick={() => handleEditTodo(todo.id, todo.text)} className="text-gray-600 hover:text-gray-900">
-                        <FiEdit3 size={22} />
-                      </button>
+                      <>
+                        <button onClick={() => handleEditTodo(todo.id, todo.text)} className="text-gray-600 hover:text-gray-900">
+                          <FiEdit3 size={22} />
+                        </button>
+                        <button onClick={() => deleteTodo.mutate(todo.id)} className="text-gray-600 hover:text-gray-900">
+                          <IoTrashOutline size={22} />
+                        </button>
+                      </>
                     )}
-                    <button onClick={() => deleteTodo.mutate(todo.id)} className="text-gray-600 hover:text-gray-900">
-                      <IoTrashOutline size={22} />
-                    </button>
                   </div>
                 </li>
               ))}
