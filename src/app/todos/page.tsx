@@ -131,7 +131,7 @@ export default function TodoPage() {
         </div>
       </nav>
 
-      <div className={"w-full max-w-lg px-4"}>
+      <div className={"w-full max-w-lg px-2"}>
         {/* 할 일 목록 */}
         <div className="mt-10 w-full max-w-lg" ref={editRef}>
           <h2 className="mb-2 text-xl font-semibold">할 일 목록</h2>
@@ -143,7 +143,7 @@ export default function TodoPage() {
               {activeTodos.map((todo) => (
                 <li
                   key={todo.id}
-                  className="mb-2 flex items-center justify-between gap-3 border-b p-2 last:mb-0 last:border-b-0"
+                  className="mb-2 flex items-center justify-between gap-3 border-b p-1 last:mb-0 last:border-b-0"
                   onDoubleClick={() => handleEditTodo(todo.id, todo.text)}>
                   <div className="flex w-full items-center gap-1">
                     <input
@@ -168,7 +168,7 @@ export default function TodoPage() {
                       <div className="flex-1 whitespace-pre-wrap break-words">{todo.text}</div>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     {editId === todo.id ? (
                       <>
                         <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
@@ -201,7 +201,7 @@ export default function TodoPage() {
             <h2 className="mb-2 text-xl font-semibold">완료된 목록</h2>
             <ul className="rounded-md bg-white p-3 shadow-md">
               {completedTodos.map((todo) => (
-                <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-2 last:mb-0 last:border-b-0">
+                <li key={todo.id} className="mb-2 flex items-center justify-between border-b p-1 last:mb-0 last:border-b-0">
                   <div className="flex w-full items-center gap-1">
                     <input
                       type="checkbox"
