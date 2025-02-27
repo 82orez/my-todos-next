@@ -174,7 +174,7 @@ export default function TodoPage() {
                         <button onClick={() => handleSaveTodo(todo.id)} className="text-blue-500 hover:text-blue-700">
                           <FaRegSave size={22} />
                         </button>
-                        <button onClick={() => handleSaveTodo(todo.id)} className="text-red-500 hover:text-red-700">
+                        <button onClick={() => setEditId(null)} className="text-red-500 hover:text-red-700">
                           <MdCancel size={25} />
                         </button>
                       </>
